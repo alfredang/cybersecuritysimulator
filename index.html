@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Cybersecurity Threat Simulation Lab</title>
+<link rel="stylesheet" href="style.css" />
+</head>
+<body data-theme="dark">
+
+<!-- Mobile menu toggle -->
+<button id="menuToggle" class="menu-toggle" aria-label="Toggle menu">&#9776;</button>
+
+<div class="app">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="brand">
+      <div class="brand-logo">&#128737;</div>
+      <div>
+        <h1>CyberLab</h1>
+        <p>Threat Simulation</p>
+      </div>
+    </div>
+
+    <nav class="nav">
+      <button class="nav-item active" data-section="dashboard"><span>&#127968;</span> Dashboard</button>
+      <button class="nav-item" data-section="phishing"><span>&#128231;</span> Phishing</button>
+      <button class="nav-item" data-section="xss"><span>&#128187;</span> XSS</button>
+      <button class="nav-item" data-section="sqli"><span>&#128274;</span> SQL Injection</button>
+      <button class="nav-item" data-section="password"><span>&#128273;</span> Password Lab</button>
+      <button class="nav-item" data-section="malware"><span>&#129440;</span> Malware</button>
+      <button class="nav-item" data-section="virus"><span>&#129440;</span> Virus</button>
+      <button class="nav-item" data-section="ransomware"><span>&#128683;</span> Ransomware</button>
+      <button class="nav-item" data-section="social"><span>&#129333;</span> Social Engineering</button>
+      <button class="nav-item" data-section="weakpass"><span>&#9888;&#65039;</span> Weak Passwords</button>
+      <button class="nav-item" data-section="leakage"><span>&#128172;</span> Data Leakage</button>
+      <button class="nav-item" data-section="quiz"><span>&#127891;</span> Final Quiz</button>
+    </nav>
+
+    <div class="sidebar-footer">
+      <button id="themeToggle" class="theme-btn">&#127769; Toggle Theme</button>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+
+    <!-- DASHBOARD -->
+    <section class="section active" id="dashboard">
+      <header class="page-header">
+        <div>
+          <h2>Threat Dashboard</h2>
+          <p class="muted">Overview of common cybersecurity threats and your learning progress.</p>
+        </div>
+      </header>
+
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-label">Threats Covered</div>
+          <div class="stat-value">10</div>
+          <div class="stat-bar"><div class="stat-fill" style="width:100%"></div></div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Topics Explored</div>
+          <div class="stat-value" id="exploredCount">0</div>
+          <div class="stat-bar"><div class="stat-fill" id="exploredBar" style="width:0%"></div></div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Quiz Score</div>
+          <div class="stat-value" id="quizScoreStat">--</div>
+          <div class="stat-bar"><div class="stat-fill" id="quizScoreBar" style="width:0%"></div></div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Avg Risk Level</div>
+          <div class="stat-value risk-high">High</div>
+          <div class="stat-bar"><div class="stat-fill risk-bar-high" style="width:75%"></div></div>
+        </div>
+      </div>
+
+      <h3 class="section-title">All Threats</h3>
+      <div class="threat-grid" id="threatGrid"></div>
+    </section>
+
+    <!-- PHISHING -->
+    <section class="section" id="phishing">
+      <header class="page-header">
+        <div><h2>&#128231; Phishing Simulator</h2><p class="muted">Identify suspicious emails — all examples are fictional.</p></div>
+        <span class="risk-badge risk-high">High Risk</span>
+      </header>
+
+      <div class="card">
+        <h3>What is Phishing?</h3>
+        <p>Phishing is a social-engineering attack where attackers impersonate trusted senders to trick victims into revealing credentials, clicking malicious links, or downloading harmful attachments.</p>
+      </div>
+
+      <div class="card">
+        <h3>Simulation: Is this email Safe or Phishing?</h3>
+        <div class="filter-row">
+          <label class="muted small">Category:</label>
+          <select id="emailCategory" class="input compact">
+            <option value="all">All categories</option>
+            <option value="bank">Banking / Finance</option>
+            <option value="tech">Tech / Account</option>
+            <option value="work">Workplace / HR</option>
+            <option value="delivery">Delivery / Shopping</option>
+            <option value="social">Social Media</option>
+            <option value="reward">Lottery / Reward</option>
+          </select>
+          <span class="phish-counter" id="phishCounter"></span>
+        </div>
+        <div class="email-mock" id="emailMock"></div>
+        <div class="btn-row">
+          <button class="btn btn-success" data-phish-answer="safe">Mark as Safe</button>
+          <button class="btn btn-danger" data-phish-answer="phish">Mark as Phishing</button>
+          <button class="btn btn-ghost" id="nextEmail">Next Email &rarr;</button>
+        </div>
+        <div class="result" id="phishResult"></div>
+      </div>
+
+      <div class="card">
+        <h3>&#128270; Annotated Walkthrough: Spot the Red Flags</h3>
+        <p class="muted">Step through a fictional phishing email one clue at a time.</p>
+        <div class="walkthrough" id="walkthrough"></div>
+        <div class="btn-row">
+          <button class="btn btn-primary" id="walkPrev">&larr; Previous</button>
+          <button class="btn btn-primary" id="walkNext">Next clue &rarr;</button>
+          <button class="btn btn-ghost" id="walkRestart">Restart</button>
+        </div>
+        <div class="walkthrough-progress">
+          <div id="walkProgressFill" class="walkthrough-progress-fill"></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>&#128279; Suspicious URL Inspector</h3>
+        <p class="muted">Paste any URL (real or made-up). The inspector explains what to check — it does not visit the URL.</p>
+        <input id="urlInput" type="text" class="input" placeholder="e.g. http://paypa1-secure.com.verify-login.ru/account" />
+        <div class="btn-row">
+          <button class="btn btn-primary" id="urlAnalyze">Analyze</button>
+          <button class="btn btn-ghost" data-url-example="http://paypa1-secure.com.verify-login.ru/account">Try lookalike</button>
+          <button class="btn btn-ghost" data-url-example="https://xn--80ak6aa92e.com/login">Try punycode</button>
+          <button class="btn btn-ghost" data-url-example="https://bit.ly/3xY9aZ">Try shortener</button>
+          <button class="btn btn-ghost" data-url-example="https://accounts.google.com/signin">Try legitimate</button>
+        </div>
+        <div id="urlReport" class="url-report"></div>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <h3>&#9888;&#65039; Warning Signs</h3>
+          <ul>
+            <li>Generic greetings like "Dear Customer"</li>
+            <li>Urgent, fear-based language</li>
+            <li>Mismatched sender domain</li>
+            <li>Suspicious links or attachments</li>
+            <li>Requests for passwords or money</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>&#128737; Prevention Tips</h3>
+          <ul>
+            <li>Hover over links before clicking</li>
+            <li>Verify sender via another channel</li>
+            <li>Enable multi-factor authentication</li>
+            <li>Report suspicious emails</li>
+            <li>Use spam filters and email security tools</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="card quiz-card">
+        <h3>&#127891; Quick Quiz</h3>
+        <p>Which is the strongest sign of a phishing email?</p>
+        <div class="quiz-options" data-quiz="phishing" data-answer="2">
+          <button class="quiz-opt" data-i="0">A formal greeting</button>
+          <button class="quiz-opt" data-i="1">Company logo</button>
+          <button class="quiz-opt" data-i="2">Urgent request to click a strange link</button>
+          <button class="quiz-opt" data-i="3">Long signature</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- XSS -->
+    <section class="section" id="xss">
+      <header class="page-header">
+        <div><h2>&#128187; XSS Simulator</h2><p class="muted">See how unescaped input can be dangerous — safely.</p></div>
+        <span class="risk-badge risk-high">High Risk</span>
+      </header>
+
+      <div class="card">
+        <h3>What is Cross-Site Scripting?</h3>
+        <p>XSS occurs when an application renders user input as HTML/JavaScript without proper escaping, allowing attackers to inject content that could steal sessions or deface pages.</p>
+      </div>
+
+      <div class="card">
+        <h3>Try It (Conceptual Demo)</h3>
+        <p class="muted">Type any text. We'll show how it would render in an unsafe vs safe app.</p>
+        <input id="xssInput" type="text" class="input" placeholder='Try: <b>hello</b> or <script>alert("x")</script>' />
+        <div class="grid-2" style="margin-top:1rem;">
+          <div>
+            <h4 class="bad-label">&#10060; Unsafe Rendering (illustration)</h4>
+            <pre class="code-block" id="xssUnsafe"></pre>
+            <p class="muted small">In a vulnerable app, this raw HTML would execute. We only display the source for safety.</p>
+          </div>
+          <div>
+            <h4 class="good-label">&#9989; Safe Escaped Output</h4>
+            <div class="code-block" id="xssSafe"></div>
+            <p class="muted small">Here the input is safely escaped and rendered as plain text.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="card"><h3>&#9888;&#65039; Warning Signs</h3><ul><li>Pop-ups from untrusted sites</li><li>Unexpected redirects</li><li>Strange characters in URLs</li></ul></div>
+        <div class="card"><h3>&#128737; Prevention Tips</h3><ul><li>Always escape/encode output</li><li>Use Content Security Policy (CSP)</li><li>Sanitize user-supplied HTML</li><li>Use frameworks that auto-escape</li></ul></div>
+      </div>
+
+      <div class="card quiz-card">
+        <h3>&#127891; Quick Quiz</h3>
+        <p>The best way to prevent XSS is to:</p>
+        <div class="quiz-options" data-quiz="xss" data-answer="1">
+          <button class="quiz-opt" data-i="0">Block all JavaScript</button>
+          <button class="quiz-opt" data-i="1">Escape user input on output</button>
+          <button class="quiz-opt" data-i="2">Use longer passwords</button>
+          <button class="quiz-opt" data-i="3">Disable cookies</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- SQLI -->
+    <section class="section" id="sqli">
+      <header class="page-header">
+        <div><h2>&#128274; SQL Injection Simulator</h2><p class="muted">Mock login form using fake in-memory data only.</p></div>
+        <span class="risk-badge risk-critical">Critical</span>
+      </header>
+
+      <div class="card">
+        <h3>What is SQL Injection?</h3>
+        <p>SQL injection happens when user input is concatenated into a SQL query, letting attackers alter the query's logic. This demo uses mock data — no real database is queried.</p>
+      </div>
+
+      <div class="card">
+        <h3>Mock Login (Vulnerable Mode)</h3>
+        <div class="login-mock">
+          <input id="sqlUser" class="input" placeholder="Username (try: admin)" />
+          <input id="sqlPass" class="input" placeholder='Password (try: " OR "1"="1)' />
+          <button class="btn btn-primary" id="sqlLogin">Login</button>
+        </div>
+        <p class="muted small">Hint: Try username <code>admin</code> with password <code>' OR '1'='1</code></p>
+        <pre class="code-block" id="sqlQueryDisplay">SELECT * FROM users WHERE username='' AND password=''</pre>
+        <div class="result" id="sqlResult"></div>
+      </div>
+
+      <div class="grid-2">
+        <div class="card"><h3>&#9888;&#65039; Warning Signs</h3><ul><li>Login bypass possible with quotes</li><li>Database errors in responses</li><li>Unfiltered input fields</li></ul></div>
+        <div class="card"><h3>&#128737; Prevention Tips</h3><ul><li>Use <strong>parameterized queries</strong> / prepared statements</li><li>Validate and sanitize input</li><li>Apply least-privilege DB accounts</li><li>Use ORMs that escape inputs</li></ul></div>
+      </div>
+
+      <div class="card quiz-card">
+        <h3>&#127891; Quick Quiz</h3>
+        <p>The best protection against SQL injection is:</p>
+        <div class="quiz-options" data-quiz="sqli" data-answer="2">
+          <button class="quiz-opt" data-i="0">Hiding the login URL</button>
+          <button class="quiz-opt" data-i="1">Renaming database tables</button>
+          <button class="quiz-opt" data-i="2">Parameterized queries</button>
+          <button class="quiz-opt" data-i="3">Disabling cookies</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- PASSWORD -->
+    <section class="section" id="password">
+      <header class="page-header">
+        <div><h2>&#128273; Password Strength Lab</h2><p class="muted">Estimate strength using simple entropy heuristics.</p></div>
+        <span class="risk-badge risk-medium">Medium Risk</span>
+      </header>
+
+      <div class="card">
+        <h3>Test Your Password</h3>
+        <input id="pwInput" type="text" class="input" placeholder="Type a password (this stays in your browser)" />
+        <div class="strength-meter"><div id="strengthFill" class="strength-fill"></div></div>
+        <div class="strength-label" id="strengthLabel">Strength: --</div>
+        <div class="grid-2" style="margin-top:1rem;">
+          <div class="info-box">
+            <div class="info-label">Estimated crack time</div>
+            <div class="info-value" id="crackTime">--</div>
+          </div>
+          <div class="info-box">
+            <div class="info-label">Entropy (approx bits)</div>
+            <div class="info-value" id="entropyValue">--</div>
+          </div>
+        </div>
+        <div class="suggestions" id="pwSuggestions"></div>
+      </div>
+
+      <div class="grid-2">
+        <div class="card"><h3>&#9888;&#65039; Weak Examples</h3><ul><li>123456</li><li>password</li><li>qwerty</li><li>your name + birthday</li></ul></div>
+        <div class="card"><h3>&#128737; Strong Password Tips</h3><ul><li>16+ characters with mixed types</li><li>Use a passphrase of unrelated words</li><li>Use a password manager</li><li>Enable MFA whenever possible</li></ul></div>
+      </div>
+
+      <div class="card quiz-card">
+        <h3>&#127891; Quick Quiz</h3>
+        <p>Which is the strongest password?</p>
+        <div class="quiz-options" data-quiz="password" data-answer="2">
+          <button class="quiz-opt" data-i="0">password123</button>
+          <button class="quiz-opt" data-i="1">JohnDoe1990</button>
+          <button class="quiz-opt" data-i="2">river-music-7Q!cloud-zebra</button>
+          <button class="quiz-opt" data-i="3">qwerty</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- MALWARE -->
+    <section class="section" id="malware">
+      <header class="page-header">
+        <div><h2>&#129440; Malware Visual Demo</h2><p class="muted">Pure animation — no real malware involved.</p></div>
+        <span class="risk-badge risk-high">High Risk</span>
+      </header>
+
+      <div class="card">
+        <h3>What is Malware?</h3>
+        <p>Malware is any malicious software designed to harm, exploit, or otherwise compromise a system. Common types include trojans, spyware, adware, and worms.</p>
+        <button class="btn btn-primary" id="malwareStart">Start Simulation</button>
+        <div class="malware-screen" id="malwareScreen">
+          <div class="terminal" id="malwareTerminal"></div>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="card"><h3>&#9888;&#65039; Symptoms</h3><ul><li>Slow performance</li><li>Pop-ups and unknown apps</li><li>Disabled antivirus</li><li>Unusual network activity</li></ul></div>
+        <div class="card"><h3>&#128737; Prevention</h3><ul><li>Install reputable antivirus</li><li>Keep software updated</li><li>Avoid pirated software</li><li>Don't click unknown links/files</li></ul></div>
+      </div>
+
+      <div class="card quiz-card">
+        <h3>&#127891; Quick Quiz</h3>
+        <p>Which is NOT a sign of malware infection?</p>
+        <div class="quiz-options" data-quiz="malware" data-answer="3">
+          <button class="quiz-opt" data-i="0">Slow performance</button>
+          <button class="quiz-opt" data-i="1">Frequent pop-ups</button>
+          <button class="quiz-opt" data-i="2">Disabled security tools</button>
+          <button class="quiz-opt" data-i="3">Faster boot time</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- VIRUS -->
+    <section class="section" id="virus">
+      <header class="page-header">
+        <div><h2>&#129440; Virus Spread Visualizer</h2><p class="muted">Visual animation showing conceptual virus propagation.</p></div>
+        <span class="risk-badge risk-high">High Risk</span>
+      </header>
+
+      <div class="card">
+        <h3>What is a Computer Virus?</h3>
+        <p>A virus is a type of malware that attaches itself to clean files and spreads through systems, often when users execute infected files.</p>
+        <button class="btn btn-primary" id="virusStart">Start Visualization</button>
+        <button class="btn btn-ghost" id="virusReset">Reset</button>
+        <div class="virus-grid" id="virusGrid"></div>
+      </div>
+
+      <div class="grid-2">
+        <div class="card"><h3>&#9888;&#65039; Spreads Via</h3><ul><li>Infected USB drives</li><li>Email attachments</li><li>Downloaded files</li><li>Network shares</li></ul></div>
+        <div class="card"><h3>&#128737; Prevention</h3><ul><li>Scan removable drives</li><li>Don't open suspicious attachments</li><li>Patch operating systems</li><li>Use endpoint protection</li></ul></div>
+      </div>
+    </section>
+
+    <!-- RANSOMWARE -->
+    <section class="section" id="ransomware">
+      <header class="page-header">
+        <div><h2>&#128683; Ransomware Demo</h2><p class="muted">A fake locked-screen demo — completely safe.</p></div>
+        <span class="risk-badge risk-critical">Critical</span>
+      </header>
+
+      <div class="card">
+        <h3>What is Ransomware?</h3>
+        <p>Ransomware encrypts files and demands payment to restore access. Attackers often exploit phishing or unpatched systems for entry.</p>
+        <button class="btn btn-danger" id="ransomStart">Show Locked Screen Demo</button>
+      </div>
+
+      <div class="grid-2">
+        <div class="card"><h3>&#9888;&#65039; Warning Signs</h3><ul><li>Files renamed with strange extensions</li><li>Ransom note .txt files</li><li>Sudden inability to open files</li></ul></div>
+        <div class="card"><h3>&#128737; Recovery & Prevention</h3><ul><li>Maintain offline backups</li><li>Test restores regularly</li><li>Patch and segment networks</li><li>Don't pay — there's no guarantee</li></ul></div>
+      </div>
+
+      <div class="card quiz-card">
+        <h3>&#127891; Quick Quiz</h3>
+        <p>Best defense against ransomware:</p>
+        <div class="quiz-options" data-quiz="ransom" data-answer="1">
+          <button class="quiz-opt" data-i="0">Pay the attacker quickly</button>
+          <button class="quiz-opt" data-i="1">Maintain tested offline backups</button>
+          <button class="quiz-opt" data-i="2">Disable Wi-Fi only</button>
+          <button class="quiz-opt" data-i="3">Rename system files</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- SOCIAL -->
+    <section class="section" id="social">
+      <header class="page-header">
+        <div><h2>&#129333; Social Engineering</h2><p class="muted">Attackers exploit trust, fear, and urgency.</p></div>
+        <span class="risk-badge risk-high">High Risk</span>
+      </header>
+
+      <div class="card">
+        <h3>What is Social Engineering?</h3>
+        <p>Social engineering manipulates people into giving up confidential information. It targets the human element rather than technical vulnerabilities.</p>
+      </div>
+
+      <div class="card">
+        <h3>Decision Trainer: What would you do?</h3>
+        <div class="filter-row">
+          <label class="muted small">Filter by tactic:</label>
+          <select id="socialFilter" class="input compact">
+            <option value="all">All tactics</option>
+            <option value="pretexting">Pretexting</option>
+            <option value="baiting">Baiting</option>
+            <option value="tailgating">Tailgating</option>
+            <option value="vishing">Vishing</option>
+            <option value="smishing">Smishing</option>
+            <option value="bec">BEC / CEO fraud</option>
+            <option value="quid">Quid Pro Quo</option>
+            <option value="watering">Watering Hole</option>
+          </select>
+          <span class="phish-counter" id="socialCounter"></span>
+        </div>
+        <div id="socialScenario" class="scenario"></div>
+        <div class="btn-row" id="socialChoices"></div>
+        <div class="result" id="socialResult"></div>
+        <div class="scenario-score">
+          <span>Score:</span>
+          <span id="socialScore">0 / 0</span>
+          <button class="btn btn-ghost" id="nextScenario">Next Scenario &rarr;</button>
+          <button class="btn btn-ghost" id="resetSocial">Reset Score</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>&#127917; Tactic Reference</h3>
+        <p class="muted">Quick definitions of the most common social-engineering techniques.</p>
+        <div class="threat-grid">
+          <div class="threat-card"><div class="icon">🎭</div><h4>Pretexting</h4><p>Inventing a false identity or scenario (fake IT, auditor, vendor) to extract info.</p></div>
+          <div class="threat-card"><div class="icon">🎁</div><h4>Baiting</h4><p>Tempting the victim with something attractive — free download, USB stick, gift.</p></div>
+          <div class="threat-card"><div class="icon">🚪</div><h4>Tailgating</h4><p>Slipping into restricted areas behind authorized people.</p></div>
+          <div class="threat-card"><div class="icon">📞</div><h4>Vishing</h4><p>Voice phishing — phone calls impersonating banks, IT, or government.</p></div>
+          <div class="threat-card"><div class="icon">📱</div><h4>Smishing</h4><p>SMS-based phishing with fake delivery, bank, or 2FA messages.</p></div>
+          <div class="threat-card"><div class="icon">👔</div><h4>BEC / CEO Fraud</h4><p>Impersonating an executive to authorize wire transfers or gift-card purchases.</p></div>
+          <div class="threat-card"><div class="icon">🔄</div><h4>Quid Pro Quo</h4><p>Offering a "favor" (free help, prize) in exchange for credentials or access.</p></div>
+          <div class="threat-card"><div class="icon">🕳️</div><h4>Watering Hole</h4><p>Compromising a site the target group already trusts and visits.</p></div>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="card"><h3>&#9888;&#65039; Common Tactics</h3><ul><li>Pretexting (fake identity)</li><li>Baiting (free downloads/USBs)</li><li>Tailgating into offices</li><li>Vishing (voice phishing)</li></ul></div>
+        <div class="card"><h3>&#128737; Defense</h3><ul><li>Verify identities through known channels</li><li>Be skeptical of urgency</li><li>Train employees regularly</li><li>Report unusual requests</li></ul></div>
+      </div>
+
+      <div class="card quiz-card">
+        <h3>&#127891; Quick Quiz</h3>
+        <p>An attacker calls pretending to be from your bank's fraud team and asks for your one-time SMS code. This is:</p>
+        <div class="quiz-options" data-quiz="social" data-answer="2">
+          <button class="quiz-opt" data-i="0">Tailgating</button>
+          <button class="quiz-opt" data-i="1">Watering hole</button>
+          <button class="quiz-opt" data-i="2">Vishing (voice phishing)</button>
+          <button class="quiz-opt" data-i="3">Baiting</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- WEAK PASS -->
+    <section class="section" id="weakpass">
+      <header class="page-header">
+        <div><h2>&#9888;&#65039; Weak Passwords</h2><p class="muted">See how common weak passwords compare.</p></div>
+        <span class="risk-badge risk-medium">Medium Risk</span>
+      </header>
+
+      <div class="card">
+        <h3>Top Weak Passwords vs Strong Alternatives</h3>
+        <table class="table">
+          <thead><tr><th>Weak</th><th>Crack time (approx)</th><th>Stronger Alternative</th></tr></thead>
+          <tbody>
+            <tr><td>123456</td><td>Instant</td><td>tea-MOON-river-91!</td></tr>
+            <tr><td>password</td><td>Instant</td><td>quartz-Otter-Beam-7Q</td></tr>
+            <tr><td>qwerty</td><td>Instant</td><td>silly-cactus-jumps-Hi9</td></tr>
+            <tr><td>letmein</td><td>Instant</td><td>orchid-piano-Storm-44</td></tr>
+            <tr><td>iloveyou</td><td>~ seconds</td><td>willow-Mango-Robot-2x</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="grid-2">
+        <div class="card"><h3>&#9888;&#65039; Why Weak Passwords Fail</h3><ul><li>Short and predictable</li><li>Found in leaked password lists</li><li>Easy to brute-force</li><li>Reused across sites</li></ul></div>
+        <div class="card"><h3>&#128737; Prevention</h3><ul><li>Use unique passwords per site</li><li>Generate via a password manager</li><li>Enable MFA</li><li>Check breaches periodically</li></ul></div>
+      </div>
+    </section>
+
+    <!-- LEAKAGE -->
+    <section class="section" id="leakage">
+      <header class="page-header">
+        <div><h2>&#128172; Data Leakage</h2><p class="muted">Sensitive data exposed by accident or attack.</p></div>
+        <span class="risk-badge risk-high">High Risk</span>
+      </header>
+
+      <div class="card">
+        <h3>What is Data Leakage?</h3>
+        <p>Data leakage is the unauthorized transmission of data from inside an organization to an external destination. It can be accidental (misconfigured cloud storage) or malicious (insider exfiltration).</p>
+      </div>
+
+      <div class="card">
+        <h3>Leakage Risk Estimator</h3>
+        <p class="muted">Toggle practices and see your leak risk score.</p>
+        <div class="checklist" id="leakChecklist">
+          <label><input type="checkbox" data-points="20" checked> Sensitive data is encrypted at rest</label>
+          <label><input type="checkbox" data-points="20" checked> Access controls follow least-privilege</label>
+          <label><input type="checkbox" data-points="15"> Cloud storage buckets are private</label>
+          <label><input type="checkbox" data-points="15"> Logs and backups are protected</label>
+          <label><input type="checkbox" data-points="15"> Employees receive security training</label>
+          <label><input type="checkbox" data-points="15"> DLP (Data Loss Prevention) is in place</label>
+        </div>
+        <div class="strength-meter"><div id="leakFill" class="strength-fill"></div></div>
+        <div class="strength-label" id="leakLabel">Risk: --</div>
+      </div>
+
+      <div class="grid-2">
+        <div class="card"><h3>&#9888;&#65039; Common Causes</h3><ul><li>Misconfigured S3 buckets</li><li>Unencrypted laptops</li><li>Phishing-stolen credentials</li><li>Insider threats</li></ul></div>
+        <div class="card"><h3>&#128737; Prevention</h3><ul><li>Classify and encrypt sensitive data</li><li>Audit access regularly</li><li>Use DLP tools</li><li>Train staff on handling data</li></ul></div>
+      </div>
+    </section>
+
+    <!-- QUIZ -->
+    <section class="section" id="quiz">
+      <header class="page-header">
+        <div><h2>&#127891; Final Quiz</h2><p class="muted">Test your overall cybersecurity knowledge.</p></div>
+      </header>
+
+      <div class="card" id="quizContainer"></div>
+
+      <div class="card hidden" id="certificateCard">
+        <div class="certificate">
+          <div class="cert-border">
+            <h2>&#127942; Certificate of Completion</h2>
+            <p>This certifies that</p>
+            <h3 id="certName">Cybersecurity Learner</h3>
+            <p>has successfully completed the</p>
+            <h3>Cybersecurity Threat Simulation Lab</h3>
+            <p class="cert-score">Score: <span id="certScore">--</span> / <span id="certTotal">--</span></p>
+            <p class="cert-date" id="certDate"></p>
+          </div>
+          <button class="btn btn-primary" id="retryQuiz">Retake Quiz</button>
+        </div>
+      </div>
+    </section>
+
+    <footer class="site-footer">
+      Powered by <a href="https://www.tertiarycourses.com.sg" target="_blank" rel="noopener noreferrer">Tertiary Infotech Academy Pte Ltd</a>
+    </footer>
+  </main>
+</div>
+
+<!-- RANSOMWARE OVERLAY -->
+<div class="ransom-overlay hidden" id="ransomOverlay">
+  <div class="ransom-content">
+    <div class="ransom-icon">&#128274;</div>
+    <h1>YOUR FILES HAVE BEEN ENCRYPTED</h1>
+    <p>(This is a SIMULATION — no real files were touched)</p>
+    <p class="ransom-timer" id="ransomTimer">Time left: 23:59:59</p>
+    <p>Pay <strong>0.5 BTC</strong> to recover access.</p>
+    <p class="ransom-warn">In a real attack, paying does NOT guarantee recovery. Always maintain offline backups.</p>
+    <button class="btn btn-success" id="ransomClose">Exit Demo</button>
+  </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
